@@ -76,7 +76,10 @@ heading Current environment
 echo "Current user      : $(id)"
 echo "Working directory : $(pwd)"
 
-if ! cmd_present sudo; then
+if [[ $(id -u) == 0 ]]; then
+    echo "Current user is root, disabling sudo"
+    cmd_disable sudo
+elif ! cmd_present sudo; then
     echo "sudo is missing, running all commands as current user"
 else
     heading Sudo test
