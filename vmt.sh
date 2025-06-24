@@ -70,6 +70,7 @@ check_cmd inxi
 check_cmd sudo
 check_cmd pstree
 check_cmd lsb_release
+check_cmd perl
 
 heading Current environment
 echo "Current user      : $(id)"
@@ -88,7 +89,7 @@ fi
 # heading Environment variables; env
 
 heading OS and Kernel
-lsb_release -a
+run_ex lsb_release -a
 uname -a
 echo -n "CMDLINE: "; cat /proc/cmdline
 
@@ -109,10 +110,10 @@ echo "Virt    : $(run_ex sudo systemd-detect-virt)"
 echo "CVM     : $(run_ex sudo systemd-detect-virt --cvm)"
 
 heading 'Cpuinfo (first processor)'
-perl -pe '/^$/ && do {print; exit}' </proc/cpuinfo
-perl -ne 'eof() && do {print "Last processor #: $1\n"; exit}; /processor\s*:\s*(\d+)/' </proc/cpuinfo
+run_ex perl -pe '/^$/ && do {print; exit}' </proc/cpuinfo
+run_ex perl -ne 'eof() && do {print "Last processor #: $1\n"; exit}; /processor\s*:\s*(\d+)/' </proc/cpuinfo
 
 heading Processes
-pstree
+run_ex pstree
 
 heading Finished
