@@ -69,6 +69,7 @@ check_cmd systemd-detect-virt
 check_cmd inxi
 check_cmd sudo
 check_cmd pstree
+check_cmd lsb_release
 
 heading Current environment
 echo "Current user      : $(id)"
