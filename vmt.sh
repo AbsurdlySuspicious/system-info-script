@@ -56,7 +56,8 @@ heading 'Cpuinfo (first processor)'
 perl -pe '/^$/ && do {print; exit}' </proc/cpuinfo
 perl -ne 'eof() && do {print "Last processor #: $1\n"; exit}; /processor\s*:\s*(\d+)/' </proc/cpuinfo
 
-heading Kernel
+heading Kernel and system
+lsb_release -a
 uname -a
 echo -n "CMDLINE: "; cat /proc/cmdline
 
