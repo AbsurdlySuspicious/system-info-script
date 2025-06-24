@@ -6,5 +6,5 @@ info-ubuntu:
   image: ubuntu:24.04
   script:
     - apt update
-    - apt install -y --no-install-recommends lsb-release inxi psmisc systemd perl
+    - apt install -y --no-install-recommends lsb-release inxi dmidecode psmisc systemd perl
     - ./vmt.sh
