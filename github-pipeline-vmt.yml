@@ -1,0 +1,19 @@
+name: VM test
+
+on:
+  push:
+    branches:
+      - vm-test
+
+jobs:
+  check-shit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install apt packages
+        run: |
+          sudo apt remove man-db
+          sudo apt install -y inxi perl psmisc
+      - name: Echo info
+        run: ./vmt.sh
