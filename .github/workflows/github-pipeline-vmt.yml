@@ -1,0 +1,20 @@
+name: System info test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  check-shit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install apt packages
+        run: |
+          sudo apt remove man-db
+          sudo apt install -y inxi perl psmisc
+      - name: Show info
+        run: ./vmt.sh
+
