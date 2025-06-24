@@ -5,4 +5,5 @@ info-ubuntu:
   stage: check
   image: ubuntu:24.04
   script:
+    - apt install -y --no-install-recommends lsb-release inxi psmisc sudo systemd perl
     - ./vmt.sh
