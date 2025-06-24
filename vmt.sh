@@ -36,6 +36,11 @@ heading Sudo/user test
 id
 sudo id
 
+heading OS and Kernel
+lsb_release -a
+uname -a
+echo -n "CMDLINE: "; cat /proc/cmdline
+
 heading Inxi
 sudo inxi -CmDSG -c 0
 
@@ -55,11 +60,6 @@ echo "CVM     : $(sudo systemd-detect-virt --cvm)"
 heading 'Cpuinfo (first processor)'
 perl -pe '/^$/ && do {print; exit}' </proc/cpuinfo
 perl -ne 'eof() && do {print "Last processor #: $1\n"; exit}; /processor\s*:\s*(\d+)/' </proc/cpuinfo
-
-heading Kernel and system
-lsb_release -a
-uname -a
-echo -n "CMDLINE: "; cat /proc/cmdline
 
 heading Processes
 pstree
