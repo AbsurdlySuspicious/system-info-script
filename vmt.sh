@@ -1,7 +1,46 @@
 #!/bin/bash
 
+declare -A commands_present
+
 check_cmd() {
-    which "$1" || echo "No $1"
+    if which "$1"; then
+        commands_present[$1]=1
+    else
+        echo "No '$1' command present"
+    fi
+}
+
+cmd_present() {
+    [[ ${commands_present[$1]} == 1 ]]
+}
+
+cmd_disable() {
+    commands_present[$1]=0
+}
+
+_sudo() {
+    if ! cmd_present sudo; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
+run_ex() {
+    local with_sudo=0 orig_cmd=("$@")
+    if [[ $1 == sudo ]]; then
+        shift 1
+        with_sudo=1
+    fi
+    if cmd_present "$1"; then
+        if [[ $with_sudo == 1 ]]; then
+            _sudo "$@"
+        else
+            "$@"
+        fi
+    else
+        echo "Command '$1' missing, skipping command: ${orig_cmd[*]}"
+    fi
 }
 
 char_rep() {
@@ -31,10 +70,21 @@ check_cmd inxi
 check_cmd sudo
 check_cmd pstree
 
+heading Current environment
+echo "Current user      : $(id)"
+echo "Working directory : $(pwd)"
 
-heading Sudo/user test
-id
-sudo id
+if ! cmd_present sudo; then
+    echo "sudo is missing, running all commands as current user"
+else
+    heading Sudo test
+    if ! _sudo id; then
+        echo "Sudo doesn't work, running all commands as current user"
+        cmd_disable sudo
+    fi
+fi
+
+# heading Environment variables; env
 
 heading OS and Kernel
 lsb_release -a
@@ -42,7 +92,7 @@ uname -a
 echo -n "CMDLINE: "; cat /proc/cmdline
 
 heading Inxi
-sudo inxi -CmDSG -c 0
+run_ex sudo inxi -CmDSG -c 0
 
 heading Memory total
 free -h
@@ -52,10 +102,10 @@ heading 'FS: sizes'; df -h
 heading 'FS: mounts'; findmnt
 
 heading Detect virt
-echo "Chroot  : $(yesno sudo systemd-detect-virt --chroot)"
-echo "User NS : $(yesno sudo systemd-detect-virt --private-users)"
-echo "Virt    : $(sudo systemd-detect-virt)"
-echo "CVM     : $(sudo systemd-detect-virt --cvm)"
+echo "Chroot  : $(yesno run_ex sudo systemd-detect-virt --chroot)"
+echo "User NS : $(yesno run_ex sudo systemd-detect-virt --private-users)"
+echo "Virt    : $(run_ex sudo systemd-detect-virt)"
+echo "CVM     : $(run_ex sudo systemd-detect-virt --cvm)"
 
 heading 'Cpuinfo (first processor)'
 perl -pe '/^$/ && do {print; exit}' </proc/cpuinfo
